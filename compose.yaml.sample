@@ -1,8 +1,8 @@
 services:
   frontend:
-    build:
-      context: "frontend/valhalla-frontend/"
-      dockerfile: "Dockerfile"
+#    build:
+#      context: "frontend/valhalla-frontend/"
+#      dockerfile: "Dockerfile"
     image: itlis/valhalla-frontend
     container_name: frontend
     environment:
@@ -15,9 +15,9 @@ services:
       - backend
       - db
   backend:
-    build:
-      context: "backend/valhalla-server/"
-      dockerfile: "Dockerfile"
+#    build:
+#      context: "backend/valhalla-server/"
+#      dockerfile: "Dockerfile"
     image: itlis/valhalla-server
     container_name: backend
     environment:
