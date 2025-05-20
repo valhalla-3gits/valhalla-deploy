@@ -1,0 +1,70 @@
+services:
+  frontend:
+    build:
+      context: "frontend/valhalla-frontend/"
+      dockerfile: "Dockerfile"
+    image: itlis/valhalla-frontend
+    container_name: frontend
+    # volumes:
+    # - /home/user/appdata/heimdall:/config
+    environment:
+      - VITE_API_URL=http://backend:3000/api/v1
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - db
+  backend:
+    build:
+      context: "backend/valhalla-server/"
+      dockerfile: "Dockerfile"
+    image: itlis/valhalla-server
+    container_name: backend
+    # volumes:
+    # - /home/user/appdata/heimdall:/config
+    environment:
+      - DB_HOST_PROD=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=your_pass
+      - DB_DIALECT=postgres
+      - DB_NAME_PRODUCTION=valhalla_prod
+      - JWTKEY=your_key
+      - TOKEN_EXPIRATION=48h
+      - BEARER=Bearer
+      - RCE_ENGINE_HOST=:50051
+      - RCE_TOKEN=your_token
+      - REFRESH_TOKEN_EXPIRATION=7d
+      - ACCESS_TOKEN_EXPIRATION=5m
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    depends_on:
+      - db
+    command: /bin/sh -c "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all && node dist/main"
+  db:
+    image: postgres:17.5-alpine
+    restart: unless-stopped
+    # set shared memory limit when using docker compose
+    shm_size: 128mb
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+      - POSTGRES_PASSWORD=illa_2004
+      - POSTGRES_DB=valhalla_prod
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/24
