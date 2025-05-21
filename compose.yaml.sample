@@ -51,9 +51,3 @@ services:
       - pgdata:/var/lib/postgresql/data
 volumes:
   pgdata:
-networks:
-  default:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.25.0.0/24
