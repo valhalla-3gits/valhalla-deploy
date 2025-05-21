@@ -71,7 +71,7 @@ check_requirements() {
 		return 1
 	fi
 
-	if netstat -tuln | grep -q ":8080 "; then
+	if ss -tuln | grep -q ":8080 "; then
 		error "Port 8080 is already in use"
 		return 1
 	fi
