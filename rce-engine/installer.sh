@@ -121,8 +121,8 @@ done
 
 if ! grep -q "gvisor" /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null; then
 	log "Adding gVisor repository..."
-	curl -fsSL https://gvisor.dev/archive.key | sudo apt-key add - || error "Failed to add gVisor key"
-	sudo add-apt-repository "deb https://storage.googleapis.com/gvisor/releases release main" || error "Failed to add gVisor repository"
+	curl -fsSL https://gvisor.dev/archive.key | sudo gpg --dearmor -o /etc/apt/keyrings/gvisor-archive-keyring.gpg
+	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/gvisor-archive-keyring.gpg] https://storage.googleapis.com/gvisor/releases release main" | sudo tee /etc/apt/sources.list.d/gvisor.list
 	sudo apt update
 else
 	log "gVisor repository already added"
